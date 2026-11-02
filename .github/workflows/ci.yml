@@ -1,0 +1,37 @@
+# .github/workflows/ci.yml
+name: CI                              # (1) Nom affiché dans l'onglet Actions
+
+on:                                    # (2) Événements déclencheurs
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:                                  
+  build-and-test: 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: ['21', '25']  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configuration de Java 
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Rendre mvnw exécutable
+        run: chmod +x mvnw
+
+      - name: Compilation et tests 
+        run: ./mvnw -B clean verify -Djava.version=${{ matrix.java-version }}
+
+      - name: Publication de l'artefact JAR(jdk 25)
+        if: matrix.java-version == 25
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-jar
+          path: target/*.jar
