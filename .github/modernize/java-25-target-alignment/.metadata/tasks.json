@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Tasks for aligning biblio-api with the requested Java 25 target.",
+  "tasks": [
+    {
+      "type": "upgrade",
+      "id": "001-upgrade-java-25-target",
+      "description": "Align the Java target to Java 25 across build, runtime, documentation, and CI. Addresses issues: Java Version is not the latest LTS (azure-java-version-02000).",
+      "reason": "The assessment detects Java 21 in pom.xml, but the README and CI already indicate Java 25.",
+      "requirements": "Make Java 25 the single intended Java target in the Maven project configuration, directly related runtime/build configuration, README documentation, and CI workflow. Validate the build and existing unit tests using Java 25. Keep Spring Boot 3.5.7, the Maven Wrapper distribution 3.9.9, and unrelated dependencies unchanged. Confirm Java 25 compatibility with the current framework before applying the target; if incompatible, stop and report the blocker without planning or performing a framework upgrade. Do not touch unrelated application code or other workspace projects.",
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    }
+  ],
+  "metadata": {
+    "planName": "java-25-target-alignment",
+    "projectName": "biblio-api",
+    "language": "java",
+    "createdAt": "2026-11-02T14:54:04-05:00",
+    "version": "1.0"
+  }
+}
