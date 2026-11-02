@@ -37,3 +37,24 @@ API REST de gestion d'une petite bibliothèque (Spring Boot 3.5, Java 25, archit
 ---
 
 > Remplacez le contenu ci-dessous par vos réponses du TP (voir `ENONCE_TP.md`).
+
+
+1- La classe Livre joue le role du modèle. LivreController est le controlleur. La logique métier ce trouve dans le package service(LivreService)
+
+2- GestionnaireErreurs gère les exceptions en les transformant en réponse http. Le code http pour un livre introuvable: 404 et pour un double emprunt: 409
+
+3- les données sont réinitialiser au redémarrage
+
+4- la requete est recu par le controller(.emprunter) qui appele le service et sa méthode d'emprunt.Le service vérifie l'existence en cherchant le Id. L'état du livre est ensuite modifié et sauvegarde via LivreRepository.save(livre).
+
+A.3 Tester avec Swagger
+
+GET /api/livres: Le Petit Prince, Une brève histoire du temps, Bonheur d'occasion
+
+POST /api/livres:code 201, id:4
+
+POST /api/livres:code 400
+
+POST /api/livres/1/emprunter: code 200, code 409("Ce livre est déjà emprunté")
+
+GET /api/livres/2/frais-retard?joursRetard=100: "frais": 20
