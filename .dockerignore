@@ -1,0 +1,13 @@
+# Ignorer les fichiers de sources et de configuration Git/GitHub
+src/
+.git/
+.github/
+*.iml
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml
+
+# Autoriser uniquement le JAR dans target/
+target/*
+!target/*.jar
