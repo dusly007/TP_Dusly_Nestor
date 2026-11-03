@@ -58,3 +58,10 @@ POST /api/livres:code 400
 POST /api/livres/1/emprunter: code 200, code 409("Ce livre est déjà emprunté")
 
 GET /api/livres/2/frais-retard?joursRetard=100: "frais": 20
+
+## Partie D — Code Smells
+| Nom du Code Smell | Fichier | Lignes / Méthode | Pourquoi c'est un problème ? |
+| :--- | :--- | :--- | :--- |
+| **Complex Conditionals** | `LivreService.java` | `calculerFraisRetard` | Multiples structures `if/else` imbriquées et valeurs en dur qui rigidifient l'ajout de nouvelles catégories. |
+| **Long Method** | `LivreService.java` | `calculerFraisRetard` | La méthode combine le choix des règles métier, le calcul et le plafonnement en un seul bloc. |
+| **Duplicate Code** | `LivreService.java` | `creer` / `modifier` | Les validations de champs (titre, auteur, année) sont dupliquées entre la création et la modification. |

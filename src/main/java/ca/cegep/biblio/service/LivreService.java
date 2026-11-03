@@ -26,30 +26,15 @@ public class LivreService {
     }
 
     public Livre creer(String titre, String auteur, String isbn, int anneePublication, String categorie) {
-        if (titre == null || titre.isBlank()) {
-            throw new IllegalArgumentException("Le titre est obligatoire");
-        }
-        if (auteur == null || auteur.isBlank()) {
-            throw new IllegalArgumentException("L'auteur est obligatoire");
-        }
-        if (anneePublication < 1450 || anneePublication > 2100) {
-            throw new IllegalArgumentException("L'année de publication est invalide");
-        }
+        validerLivre(titre, auteur, anneePublication);
         Livre livre = new Livre(null, titre, auteur, isbn, anneePublication, categorie);
         return repository.save(livre);
     }
 
     public Livre modifier(Long id, String titre, String auteur, String isbn, int anneePublication, String categorie) {
         Livre livre = trouver(id);
-        if (titre == null || titre.isBlank()) {
-            throw new IllegalArgumentException("Le titre est obligatoire");
-        }
-        if (auteur == null || auteur.isBlank()) {
-            throw new IllegalArgumentException("L'auteur est obligatoire");
-        }
-        if (anneePublication < 1450 || anneePublication > 2100) {
-            throw new IllegalArgumentException("L'année de publication est invalide");
-        }
+        validerLivre(titre, auteur, anneePublication);
+        
         livre.setTitre(titre);
         livre.setAuteur(auteur);
         livre.setIsbn(isbn);
@@ -82,25 +67,33 @@ public class LivreService {
     }
 
     public double calculerFraisRetard(String categorie, int joursRetard) {
-        double frais = 0;
-        if (joursRetard > 0) {
-            if (categorie.equals("JEUNESSE")) {
-                frais = joursRetard * 0.10;
-                if (frais > 5) {
-                    frais = 5;
-                }
-            } else if (categorie.equals("SCIENCE")) {
-                frais = joursRetard * 0.50;
-                if (frais > 20) {
-                    frais = 20;
-                }
-            } else {
-                frais = joursRetard * 0.25;
-                if (frais > 10) {
-                    frais = 10;
-                }
-            }
+        if (joursRetard <= 0) {
+            return 0.0;
         }
-        return frais;
+
+        double taux = 0.25;
+        double plafond = 10.0;
+
+        if ("JEUNESSE".equals(categorie)) {
+            taux = 0.10;
+            plafond = 5.0;
+        } else if ("SCIENCE".equals(categorie)) {
+            taux = 0.50;
+            plafond = 20.0;
+        }
+
+        return Math.min(joursRetard * taux, plafond);
+    }
+
+    private void validerLivre(String titre, String auteur, int anneePublication) {
+        if (titre == null || titre.isBlank()) {
+            throw new IllegalArgumentException("Le titre est obligatoire");
+        }
+        if (auteur == null || auteur.isBlank()) {
+            throw new IllegalArgumentException("L'auteur est obligatoire");
+        }
+        if (anneePublication < 1450 || anneePublication > 2100) {
+            throw new IllegalArgumentException("L'année de publication est invalide");
+        }
     }
 }
