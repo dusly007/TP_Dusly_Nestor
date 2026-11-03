@@ -65,3 +65,30 @@ GET /api/livres/2/frais-retard?joursRetard=100: "frais": 20
 | **Complex Conditionals** | `LivreService.java` | `calculerFraisRetard` | Multiples structures `if/else` imbriquées et valeurs en dur qui rigidifient l'ajout de nouvelles catégories. |
 | **Long Method** | `LivreService.java` | `calculerFraisRetard` | La méthode combine le choix des règles métier, le calcul et le plafonnement en un seul bloc. |
 | **Duplicate Code** | `LivreService.java` | `creer` / `modifier` | Les validations de champs (titre, auteur, année) sont dupliquées entre la création et la modification. |
+
+## Partie E — Docker, Codespaces, GHCR et Releases
+
+### E.1 & E.2 — Dockerfile et tests dans Codespaces
+J'ai rédigé un `Dockerfile` d'exécution légère (JRE 25, utilisateur non-root `appuser`, port 8080) qui récupère directement le JAR produit par la CI.
+
+# 1. Compilation du projet et génération du JAR
+./mvnw -B package
+
+# 2. Construction de l'image Docker d'exécution
+docker build -t biblio-api .
+
+# 3. Démarrage du conteneur en arrière-plan avec mappage du port 8080
+docker run -d -p 8080:8080 --name biblio-container biblio-api
+
+# 4. Validation du fonctionnement de l'API via curl
+curl http://localhost:8080/api/livres
+
+E.3,E.4 — Automatisation GHCR & Releases
+
+Le workflow CI/CD est configuré pour se déclencher lorsqu'on pousse un tag Git (v*.*.*). Il se connecte automatiquement à GHCR avec le token de GitHub, pousse l'image taggée, et génère une Release officielle avec le fichier .jar.
+
+E.5 — Justification SemVer
+
+v1.0.0 : Première version officielle stable de l'application avec la chaîne CI/CD complète.
+
+v1.1.0 : Version livrée après le réusinage de la partie D. C'est une version MINEURE car le code a été amélioré et nettoyé, mais il n'y a aucun changement cassant (breaking change) sur l'API REST.
